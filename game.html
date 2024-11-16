@@ -1,0 +1,30 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8"/>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+    <link rel="stylesheet" href="./style.css">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Nunito:ital,wght@0,300..800;1,300..800&display=swap" rel="stylesheet">
+    <link rel="apple-touch-icon" type="image/png" href="icons/icon.png">
+    <link rel="icon" type="image/png" href="icons/icon.png">
+    <link rel="manifest" href="./manifest.json" />
+    <title>Document</title>
+</head>
+<body>
+    <div class="flex-container center-horizontal center-vertical" style="width: 100vw; height: 100vh;">
+        <div class="box">
+            <p id="gameText" class="gameText"></p>
+        </div>
+    </div>
+    <dialog id="gameEndDialog">
+        <p>Game End!</p>
+        <p>Number of correct answers:</p>
+        <p id="correctAnswersCount"></p>
+    </dialog>
+</body>
+<script src="./src/js/classes.js"></script>
+<script src="./src/js/gamepacks.js"></script>
+<script src="./src/js/game.js"></script>
+</html>

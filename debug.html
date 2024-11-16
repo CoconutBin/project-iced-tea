@@ -1,0 +1,36 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Document</title>
+</head>
+
+<body>
+    <p id="alpha"></p>
+    <p id="beta"></p>
+    <p id="gamma"></p>
+</body>
+<script>
+    const alpha = document.getElementById("alpha")
+    const beta = document.getElementById("beta")
+    const gamma = document.getElementById("gamma")
+
+    try {
+        DeviceOrientationEvent.requestPermission()
+            .then((value) => {
+                window.addEventListener("deviceorientation", orientation)
+            })
+            .catch((error) => console.error(error))
+    }
+    catch (e) { window.addEventListener("deviceorientation", orientation) }
+
+    function orientation(e) {
+        alpha.innerText = e.aplha
+        beta.innerText = e.beta
+        gamma.innerText = e.gamma
+    }
+</script>
+
+</html>

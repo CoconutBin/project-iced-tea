@@ -1,0 +1,32 @@
+{
+    "name": "Project Iced Tea",
+    "short_name": "PIT",
+    "dir": "auto",
+    "lang": "en",
+    "iarc_rating_id": "",
+    "description": "Simple and fun guessing game with friends",
+    "background_color": "#f3e6d5",
+    "theme_color": "#f3e6d5",
+    "categories": [
+      "games",
+      "entertainment",
+      "social"
+    ],
+    "icons": [
+      {
+        "src": "./icons/icon.png",
+        "type": "image/png",
+        "sizes": "256x256",
+        "purpose": "any"
+      },
+      {
+        "src": "./icons/maskable_icon.png",
+        "type": "image/png",
+        "sizes": "192x192",
+        "purpose": "maskable"
+      }
+    ],
+    "start_url": "https://coconutbin.github.io/project-iced-tea",
+    "display": "fullscreen",
+    "display_override": ["fullscreen", "standalone", "window-controls-overlay"]
+  }
