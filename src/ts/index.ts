@@ -19,7 +19,7 @@ function addListItem(gamePack: GamePack): void {
     listItem.appendChild(name);
 
     listItem.addEventListener("click", () => {
-        open('../game.html', '_self')
+        open('./game.html', '_self')
         localStorage.setItem('gamePackIndex', gamePacks.indexOf(gamePack).toString())
     })
 

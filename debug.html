@@ -17,14 +17,9 @@
     const beta = document.getElementById("beta")
     const gamma = document.getElementById("gamma")
 
-    try {
-        DeviceOrientationEvent.requestPermission()
-            .then((value) => {
-                window.addEventListener("deviceorientation", orientation)
-            })
-            .catch((error) => console.error(error))
-    }
-    catch (e) { window.addEventListener("deviceorientation", orientation) }
+    document.addEventListener("click", DeviceOrientationEvent.requestPermission())
+
+    window.addEventListener("deviceorientation", orientation)
 
     function orientation(e) {
         alpha.innerText = e.aplha
