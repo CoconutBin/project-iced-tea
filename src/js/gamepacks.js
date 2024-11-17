@@ -22,7 +22,7 @@ const gamePacks = [
         "Tangerine", "Clementine", "Mandarin", "Nectarine", "Quince",
         "Avocado", "Durian", "Jackfruit", "Olive", "Soursop",
         "Sapodilla", "Breadfruit", "Acai", "Kumquat", "Ugli Fruit"
-    ]),
+    ], './src/img/fruits.png'),
     new GamePack("Countries", [
         "Argentina", "Brazil", "Canada", "Denmark", "Egypt",
         "France", "Germany", "India", "Japan", "Kenya",
