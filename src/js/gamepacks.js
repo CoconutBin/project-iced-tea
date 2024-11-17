@@ -57,6 +57,42 @@ const gamePacks = [
         "Equestrian", "Track and Field", "Marathon", "Triathlon", "Diving",
         "Water Polo", "Weightlifting", "Powerlifting", "Bodybuilding", "Billiards",
         "Snooker", "Esports", "Skating", "Ice Hockey", "Lacrosse",
-        "American Football", "Handball", "Racquetball", "Squash", "Polo"
+        "American Football", "Handball", "Racquetball", "Squash", "Polo", 'Sex'
+    ]),
+    new GamePack("Vegetables", [
+        "Carrot", "Potato", "Tomato", "Onion", "Garlic",
+        "Broccoli", "Cauliflower", "Spinach", "Lettuce", "Kale",
+        "Cucumber", "Zucchini", "Peas", "Green Beans", "Bell Pepper",
+        "Chili", "Eggplant", "Pumpkin", "Squash", "Sweet Potato",
+        "Radish", "Beetroot", "Turnip", "Leek", "Celery",
+        "Cabbage", "Artichoke", "Asparagus", "Okra", "Corn",
+        "Mushroom", "Brussels Sprouts", "Fennel", "Parsnip", "Chives",
+        "Scallion", "Ginger", "Turmeric", "Shallot", "Bok Choy",
+        "Watercress", "Horseradish", "Daikon", "Endive", "Collard Greens",
+        "Swiss Chard", "Rutabaga", "Yucca", "Wasabi", "Seaweed"
+    ]),
+    new GamePack("Trees", [
+        "Oak", "Pine", "Maple", "Birch", "Spruce",
+        "Willow", "Cedar", "Cherry Blossom", "Bamboo", "Redwood",
+        "Sequoia", "Palm", "Eucalyptus", "Aspen", "Sycamore",
+        "Baobab", "Mangrove", "Cypress", "Fir", "Hemlock",
+        "Elm", "Chestnut", "Walnut", "Hazelnut", "Beech",
+        "Alder", "Cottonwood", "Dogwood", "Hawthorn", "Juniper",
+        "Magnolia", "Acacia", "Fig", "Olive", "Peach",
+        "Apple", "Pear", "Plum", "Lemon", "Lime",
+        "Orange", "Banana", "Papaya", "Avocado", "Rubber Tree",
+        "Coconut Palm", "Date Palm", "Teak", "Mahogany", "Ebony"
+    ]),
+    new GamePack("Top Cities", [
+        "New York", "London", "Tokyo", "Paris", "Los Angeles",
+        "Chicago", "Beijing", "Shanghai", "Mumbai", "Dubai",
+        "Singapore", "Hong Kong", "Bangkok", "Moscow", "Istanbul",
+        "Rome", "Berlin", "Madrid", "Sydney", "Toronto",
+        "Seoul", "San Francisco", "Buenos Aires", "Mexico City", "Cairo",
+        "Rio de Janeiro", "Lima", "São Paulo", "Cape Town", "Nairobi",
+        "Jakarta", "Kuala Lumpur", "Lisbon", "Athens", "Dublin",
+        "Warsaw", "Prague", "Budapest", "Vienna", "Stockholm",
+        "Copenhagen", "Helsinki", "Oslo", "Brussels", "Zurich",
+        "Geneva", "Amsterdam", "Venice", "Florence", "Barcelona"
     ])
 ];
