@@ -3,10 +3,10 @@ class GamePack {
     category;
     thumbnail;
     words;
-    constructor(name, words, thumnail, category) {
+    constructor(name, words, thumbnail, category) {
         this.name = name;
         this.words = words;
-        this.thumbnail = thumnail;
+        this.thumbnail = thumbnail;
         this.category = category;
     }
 }
@@ -20,24 +20,29 @@ class Game {
     static deviceOrientation;
     static start() {
         Game.gameTextElement.parentElement.addEventListener('click', calibration);
-        function calibration(e) {
+        function calibration() {
             window.addEventListener("deviceorientation", setOrientation);
             function setOrientation(e) {
                 Game.deviceOrientation = Game.findRotation(e.gamma, e.beta);
                 console.log(e.gamma, e.beta);
                 window.removeEventListener("deviceorientation", setOrientation);
             }
-            let seconds = 3;
-            const intervalId = setInterval(() => {
-                Game.gameTextElement.innerText = seconds.toString();
-                seconds--;
-                if (seconds < 0) {
-                    clearInterval(intervalId);
-                    Game.nextWord();
-                    window.addEventListener("deviceorientation", Game.manageTilt);
-                }
-            }, 1000);
-            Game.gameTextElement.parentElement.removeEventListener('click', calibration);
+            if (Game.deviceOrientation == undefined) {
+                window.addEventListener("deviceorientation", setOrientation);
+            }
+            else {
+                let seconds = 3;
+                const intervalId = setInterval(() => {
+                    Game.gameTextElement.innerText = seconds.toString();
+                    seconds--;
+                    if (seconds < 0) {
+                        clearInterval(intervalId);
+                        Game.nextWord();
+                        window.addEventListener("deviceorientation", Game.manageTilt);
+                    }
+                }, 1000);
+                Game.gameTextElement.parentElement.removeEventListener('click', calibration);
+            }
         }
     }
     static end() {
@@ -84,6 +89,12 @@ class Game {
         }
     }
     static manageTilt(e) {
+        const angles = {
+            landscapeMidPointGamma: 20,
+            landscapeTurnPointGamma: 60,
+            portraitTurnUpBeta: 50,
+            portraitTurnDownBeta: 110
+        };
         function correct() {
             Game.correctAnswers++;
             Game.gameTextElement.parentElement.classList.add("correct");
@@ -97,28 +108,46 @@ class Game {
             window.removeEventListener("deviceorientation", Game.manageTilt);
             return;
         }
-        if (e.gamma > -60 && e.gamma < 20 && Game.isChecking) {
-            console.log(Game.deviceOrientation == "rlandscape" ? "down" : "up");
-            if (Game.deviceOrientation == "rlandscape")
-                correct();
-            else
-                skip();
-            Game.nextWord();
+        if (window.innerWidth > window.innerHeight) {
+            if (e.gamma > -angles.landscapeTurnPointGamma && e.gamma < angles.landscapeMidPointGamma && Game.isChecking) {
+                console.log(Game.deviceOrientation == "rlandscape" ? "down" : "up");
+                if (Game.deviceOrientation == "rlandscape")
+                    correct();
+                else
+                    skip();
+                Game.nextWord();
+            }
+            else if (e.gamma > angles.landscapeMidPointGamma && e.gamma < angles.landscapeTurnPointGamma && Game.isChecking) {
+                console.log(Game.deviceOrientation == "landscape" ? "down" : "up");
+                if (Game.deviceOrientation == "landscape")
+                    correct();
+                else
+                    skip();
+                Game.nextWord();
+            }
+            else if (!Game.isChecking && Math.abs(e.gamma) > 60) {
+                Game.isChecking = true;
+                console.log("center");
+            }
         }
-        else if (e.gamma > 20 && e.gamma < 60 && Game.isChecking) {
-            console.log(Game.deviceOrientation == "landscape" ? "down" : "up");
-            if (Game.deviceOrientation == "landscape")
+        else {
+            if (Math.abs(e.beta) > angles.portraitTurnDownBeta && Game.isChecking) {
+                console.log("down");
                 correct();
-            else
+            }
+            else if (Math.abs(e.beta) < angles.portraitTurnUpBeta && Game.isChecking) {
+                console.log("up");
                 skip();
-            Game.nextWord();
-        }
-        else if (!Game.isChecking && Math.abs(e.gamma) > 60) {
-            Game.isChecking = true;
-            console.log("center");
+            }
+            else if (!Game.isChecking) {
+                Game.isChecking = true;
+                console.log("center");
+            }
         }
     }
     static loadGamePack(gamePack) {
+        if (gamePack.words.length < 1)
+            return;
         const gamePackItems = [...gamePack.words];
         const gamePackItemsShuffled = [];
         while (gamePackItems.length > 0) {

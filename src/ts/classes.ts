@@ -4,10 +4,10 @@ class GamePack {
     thumbnail?: string
     words: string[]
 
-    constructor(name: string, words: string[], thumnail?: string, category?: string) {
+    constructor(name: string, words: string[], thumbnail?: string, category?: string) {
         this.name = name
         this.words = words
-        this.thumbnail = thumnail
+        this.thumbnail = thumbnail
         this.category = category
     }
 }
@@ -19,13 +19,13 @@ class Game {
     static correctAnswers: number = 0
     static isChecking: boolean = true
     static initialized: boolean = false
-    static deviceOrientation: 'portrait' | 'landscape' | 'rportrait' | 'rlandscape'
+    static deviceOrientation: 'portrait' | 'landscape' | 'rportrait' | 'rlandscape' | null
 
     static start() {
 
         Game.gameTextElement.parentElement.addEventListener('click', calibration)
 
-        function calibration(e){
+        function calibration(){
             window.addEventListener("deviceorientation", setOrientation)
 
             function setOrientation(e: DeviceOrientationEvent){
@@ -33,8 +33,11 @@ class Game {
                 console.log(e.gamma, e.beta)
                 window.removeEventListener("deviceorientation", setOrientation)
             }
-            
-            let seconds = 3;
+
+            if(Game.deviceOrientation == undefined){
+                window.addEventListener("deviceorientation", setOrientation)
+            } else {
+                let seconds = 3;
 
             const intervalId = setInterval(() => {
                 Game.gameTextElement.innerText = seconds.toString();
@@ -47,6 +50,7 @@ class Game {
                 }}, 1000);
 
             Game.gameTextElement.parentElement.removeEventListener('click', calibration)
+            }
         }
     }
 
@@ -93,6 +97,13 @@ class Game {
 
     static manageTilt(e: DeviceOrientationEvent) {
 
+        const angles = {
+            landscapeMidPointGamma: 20,
+            landscapeTurnPointGamma: 60,
+            portraitTurnUpBeta: 50,
+            portraitTurnDownBeta: 110
+        }
+
         function correct(){
             Game.correctAnswers++
             Game.gameTextElement.parentElement.classList.add("correct")
@@ -108,23 +119,38 @@ class Game {
             window.removeEventListener("deviceorientation", Game.manageTilt)
             return
         }
-        if (e.gamma > -60 && e.gamma < 20 && Game.isChecking) {
-            console.log(Game.deviceOrientation == "rlandscape"? "down":"up")
-            if(Game.deviceOrientation == "rlandscape") correct()
-            else skip()
-            Game.nextWord()
-        } else if (e.gamma > 20 && e.gamma < 60 && Game.isChecking) {
-            console.log(Game.deviceOrientation == "landscape"? "down":"up")
-            if(Game.deviceOrientation == "landscape") correct() 
-            else skip()
-            Game.nextWord()
-        } else if (!Game.isChecking && Math.abs(e.gamma) > 60) {
-            Game.isChecking = true
-            console.log("center")
+        if(window.innerWidth > window.innerHeight){
+            if (e.gamma > -angles.landscapeTurnPointGamma && e.gamma < angles.landscapeMidPointGamma && Game.isChecking) {
+                console.log(Game.deviceOrientation == "rlandscape"? "down":"up")
+                if(Game.deviceOrientation == "rlandscape") correct()
+                else skip()
+                Game.nextWord()
+            } else if (e.gamma > angles.landscapeMidPointGamma && e.gamma < angles.landscapeTurnPointGamma && Game.isChecking) {
+                console.log(Game.deviceOrientation == "landscape"? "down":"up")
+                if(Game.deviceOrientation == "landscape") correct() 
+                else skip()
+                Game.nextWord()
+            } else if (!Game.isChecking && Math.abs(e.gamma) > 60) {
+                Game.isChecking = true
+                console.log("center")
+            }
+        }
+        else {
+            if(Math.abs(e.beta) > angles.portraitTurnDownBeta && Game.isChecking){
+                console.log("down")
+                correct()
+            } else if(Math.abs(e.beta) < angles.portraitTurnUpBeta && Game.isChecking){
+                console.log("up")
+                skip()
+            } else if(!Game.isChecking){
+                Game.isChecking = true
+                console.log("center")
+            }
         }
     }
 
     static loadGamePack(gamePack: GamePack) {
+        if(gamePack.words.length < 1) return
         const gamePackItems = [...gamePack.words]
         const gamePackItemsShuffled: string[] = []
         while (gamePackItems.length > 0) {
