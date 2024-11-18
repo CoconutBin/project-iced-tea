@@ -13,6 +13,7 @@
     <p id="alpha">null</p>
     <p id="beta">null</p>
     <p id="gamma">null</p>
+    <P id="errors">error</P>
 </body>
 <script>
     const alpha = document.getElementById("alpha")
@@ -21,12 +22,10 @@
 
     try{document.getElementById('ioscheck').addEventListener("click", DeviceOrientationEvent.requestPermission().then(response => {
   if (response == 'granted') {
-    window.addEventListener('devicemotion', (e) => {
       window.addEventListener("deviceorientation", orientation)
-    })
   }
 })
-.catch(console.error))}
+.catch(document.getElementById('errors').innerHTML = console.error))}
     catch(e){window.addEventListener("deviceorientation", orientation)}
 
     
