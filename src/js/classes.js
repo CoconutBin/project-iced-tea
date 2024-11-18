@@ -13,14 +13,37 @@ class GamePack {
 class Game {
     static gameEndModal = document.getElementById('gameEndDialog');
     static gameTextElement;
+    static gameTimerElement;
     static gamePackItems;
     static correctAnswers = 0;
+    static gameTimerSeconds = 60;
     static isChecking = true;
     static initialized = false;
     static deviceOrientation;
     static start() {
         Game.gameTextElement.parentElement.addEventListener('click', calibration);
+        function permission() {
+            if (typeof (DeviceMotionEvent) !== "undefined" && typeof (DeviceMotionEvent.requestPermission) === "function") {
+                // (optional) Do something before API request prompt.
+                DeviceMotionEvent.requestPermission()
+                    .then(response => {
+                    // (optional) Do something after API prompt dismissed.
+                    if (response == "granted") {
+                        Game.gameTextElement.parentElement.addEventListener('click', calibration);
+                    }
+                })
+                    .catch(error => document.getElementById("errors").innerText = error);
+            }
+            else {
+                alert("DeviceMotionEvent is not defined");
+            }
+        }
+        if (typeof DeviceMotionEvent.requestPermission === 'function') {
+            Game.gameTextElement.parentElement.removeEventListener('click', calibration);
+            Game.gameTextElement.parentElement.addEventListener("click", permission);
+        }
         function calibration() {
+            Game.gameTextElement.parentElement.classList.add("correct");
             window.addEventListener("deviceorientation", setOrientation);
             function setOrientation(e) {
                 Game.deviceOrientation = Game.findRotation(e.gamma, e.beta);
@@ -36,9 +59,20 @@ class Game {
                     Game.gameTextElement.innerText = seconds.toString();
                     seconds--;
                     if (seconds < 0) {
+                        Game.gameTextElement.parentElement.classList.remove("correct");
                         clearInterval(intervalId);
                         Game.nextWord();
                         window.addEventListener("deviceorientation", Game.manageTilt);
+                        let gameTimerSecondsLocal = Game.gameTimerSeconds;
+                        const gameTimer = setInterval(() => {
+                            if (gameTimerSecondsLocal < 1) {
+                                Game.end();
+                                window.removeEventListener("deviceorientation", Game.manageTilt);
+                                clearInterval(gameTimer);
+                            }
+                            Game.gameTimerElement.innerText = gameTimerSecondsLocal.toString();
+                            gameTimerSecondsLocal--;
+                        }, 1000);
                     }
                 }, 1000);
                 Game.gameTextElement.parentElement.removeEventListener('click', calibration);
@@ -65,7 +99,7 @@ class Game {
     static findRotation(centerGamma, centerBeta) {
         // Case if Landscape
         if (window.innerWidth > window.innerHeight) {
-            if (Math.abs(centerGamma) <= 60) {
+            if (Math.abs(centerGamma) <= Game.tiltAngles.landscapeTurnPointGamma) {
                 alert('Please center your device');
                 return;
             }
@@ -88,13 +122,13 @@ class Game {
                 alert('Please center your device');
         }
     }
+    static tiltAngles = {
+        landscapeMidPointGamma: 20,
+        landscapeTurnPointGamma: 45,
+        portraitTurnUpBeta: 50,
+        portraitTurnDownBeta: 110
+    };
     static manageTilt(e) {
-        const angles = {
-            landscapeMidPointGamma: 20,
-            landscapeTurnPointGamma: 60,
-            portraitTurnUpBeta: 50,
-            portraitTurnDownBeta: 110
-        };
         function correct() {
             Game.correctAnswers++;
             Game.gameTextElement.parentElement.classList.add("correct");
@@ -109,7 +143,7 @@ class Game {
             return;
         }
         if (window.innerWidth > window.innerHeight) {
-            if (e.gamma > -angles.landscapeTurnPointGamma && e.gamma < angles.landscapeMidPointGamma && Game.isChecking) {
+            if (e.gamma > -Game.tiltAngles.landscapeTurnPointGamma && e.gamma < Game.tiltAngles.landscapeMidPointGamma && Game.isChecking) {
                 console.log(Game.deviceOrientation == "rlandscape" ? "down" : "up");
                 if (Game.deviceOrientation == "rlandscape")
                     correct();
@@ -117,7 +151,7 @@ class Game {
                     skip();
                 Game.nextWord();
             }
-            else if (e.gamma > angles.landscapeMidPointGamma && e.gamma < angles.landscapeTurnPointGamma && Game.isChecking) {
+            else if (e.gamma > Game.tiltAngles.landscapeMidPointGamma && e.gamma < Game.tiltAngles.landscapeTurnPointGamma && Game.isChecking) {
                 console.log(Game.deviceOrientation == "landscape" ? "down" : "up");
                 if (Game.deviceOrientation == "landscape")
                     correct();
@@ -131,13 +165,15 @@ class Game {
             }
         }
         else {
-            if (Math.abs(e.beta) > angles.portraitTurnDownBeta && Game.isChecking) {
+            if (Math.abs(e.beta) > Game.tiltAngles.portraitTurnDownBeta && Game.isChecking) {
                 console.log("down");
                 correct();
+                Game.nextWord();
             }
-            else if (Math.abs(e.beta) < angles.portraitTurnUpBeta && Game.isChecking) {
+            else if (Math.abs(e.beta) < Game.tiltAngles.portraitTurnUpBeta && Game.isChecking) {
                 console.log("up");
                 skip();
+                Game.nextWord();
             }
             else if (!Game.isChecking) {
                 Game.isChecking = true;
@@ -157,10 +193,22 @@ class Game {
         Game.gamePackItems = gamePackItemsShuffled;
         Game.start();
     }
-    static init(gameTextElement) {
+    static init(gameTextElement, gameTimerElement) {
         if (Game.initialized)
             throw new Error("Attempted to initialize while already initialized");
+        Game.gameTimerElement = gameTimerElement;
         Game.gameTextElement = gameTextElement;
         Game.initialized = true;
     }
+}
+class Settings {
+    static init() {
+        const localStorageSettings = localStorage.getItem("settings");
+        if (localStorageSettings != null) {
+            Settings.options = JSON.parse(localStorageSettings);
+        }
+        else {
+        }
+    }
+    static options = {};
 }

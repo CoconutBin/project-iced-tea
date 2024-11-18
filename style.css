@@ -1,5 +1,6 @@
 :root{
-    --text: #011206;
+    --text: #000000;
+    --text-light: #ffffff;
     --background: #f3e6d5;
     --primary: #8ab098;
     --secondary: #a29b75;
@@ -71,11 +72,12 @@ body {
     top: 50%;
     left: 50%;
     transform: translate(-50%, -50%);
+    flex-direction: column;
 }
 
 .correct{
     background: var(--success);
-    color: white !important;
+    color: var(--text-light) !important;
 }
 
 .skip{
@@ -99,6 +101,7 @@ body {
     background: var(--primary);
     margin: 4px;
     max-width: 200px;
+    color: var(--text-light)
 }
 
 .gamePack:hover{
@@ -111,10 +114,31 @@ body {
     margin: 16px
 }
 
+.timerText{
+    font-size: 32px;
+    position: relative;
+    top: 20%;
+    color: var(--text-light)
+}
+
 img{
     border-radius: calc((2vh + 2vw)/2);
     padding: 16px;
     padding-bottom: 0;
     width: min(30vw, 30vh, 150px);
     height: min(30vw, 30vh, 150px)
+}
+
+button {
+    border-radius: 10px;
+    background: var(--accent);
+    padding: 5px;
+    margin: 5px;
+    color: var(--text);
+    overflow: auto;
+    cursor: pointer;
+}
+
+button:hover {
+    background: var(--secondary)
 }
