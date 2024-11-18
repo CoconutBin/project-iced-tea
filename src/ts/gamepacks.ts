@@ -82,7 +82,7 @@ const gamePacks: GamePack[] = [
         "Apple", "Pear", "Plum", "Lemon", "Lime",
         "Orange", "Banana", "Papaya", "Avocado", "Rubber Tree",
         "Coconut Palm", "Date Palm", "Teak", "Mahogany", "Ebony"
-    ]),
+    ], './src/img/trees.png'),
     new GamePack("Top Cities", [
         "New York", "London", "Tokyo", "Paris", "Los Angeles",
         "Chicago", "Beijing", "Shanghai", "Mumbai", "Dubai",
