@@ -25,7 +25,7 @@
       window.addEventListener("deviceorientation", orientation)
   }
 })
-.catch(document.getElementById('errors').innerHTML = console.error))}
+.catch((error) => document.getElementById('errors').innerHTML = error))}
     catch(e){window.addEventListener("deviceorientation", orientation)}
 
     
