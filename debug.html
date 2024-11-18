@@ -20,15 +20,26 @@
     const beta = document.getElementById("beta")
     const gamma = document.getElementById("gamma")
 
-    try{document.getElementById('ioscheck').addEventListener("click", DeviceOrientationEvent.requestPermission().then(response => {
-  if (response == 'granted') {
-      window.addEventListener("deviceorientation", orientation)
+    function permission () {
+    if ( typeof( DeviceMotionEvent ) !== "undefined" && typeof( DeviceMotionEvent.requestPermission ) === "function" ) {
+        // (optional) Do something before API request prompt.
+        DeviceMotionEvent.requestPermission()
+            .then( response => {
+            // (optional) Do something after API prompt dismissed.
+            if ( response == "granted" ) {
+              window.addEventListener("deviceorientation", orientation)
+            }
+        })
+            .catch( error => document.getElementById("errors").innerText = error)
+    } else {
+        alert( "DeviceMotionEvent is not defined" );
+    }
   }
-})
-.catch((error) => document.getElementById('errors').innerHTML = error))}
-    catch(e){window.addEventListener("deviceorientation", orientation)}
-
+  const btn = document.getElementById( "ioscheck" );
+  btn.addEventListener( "click", permission );
     
+
+  window.addEventListener("deviceorientation", orientation)
 
     function orientation(e) {
         alpha.innerText = e.aplha
