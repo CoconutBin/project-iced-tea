@@ -19,10 +19,17 @@
     const beta = document.getElementById("beta")
     const gamma = document.getElementById("gamma")
 
-    try{document.getElementById('ioscheck').addEventListener("click", DeviceOrientationEvent.requestPermission())}
-    catch(e){console.error(e)}
+    try{document.getElementById('ioscheck').addEventListener("click", DeviceOrientationEvent.requestPermission().then(response => {
+  if (response == 'granted') {
+    window.addEventListener('devicemotion', (e) => {
+      window.addEventListener("deviceorientation", orientation)
+    })
+  }
+})
+.catch(console.error))}
+    catch(e){window.addEventListener("deviceorientation", orientation)}
 
-    window.addEventListener("deviceorientation", orientation)
+    
 
     function orientation(e) {
         alpha.innerText = e.aplha
