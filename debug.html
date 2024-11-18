@@ -19,7 +19,8 @@
     const beta = document.getElementById("beta")
     const gamma = document.getElementById("gamma")
 
-    document.getElementById('ioscheck').addEventListener("click", DeviceOrientationEvent.requestPermission())
+    try{document.getElementById('ioscheck').addEventListener("click", DeviceOrientationEvent.requestPermission())}
+    catch(e){console.error(e)}
 
     window.addEventListener("deviceorientation", orientation)
 
