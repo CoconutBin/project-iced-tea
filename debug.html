@@ -8,16 +8,18 @@
 </head>
 
 <body>
-    <p id="alpha"></p>
-    <p id="beta"></p>
-    <p id="gamma"></p>
+    <button id="ioscheck">using ios?</button>
+    
+    <p id="alpha">null</p>
+    <p id="beta">null</p>
+    <p id="gamma">null</p>
 </body>
 <script>
     const alpha = document.getElementById("alpha")
     const beta = document.getElementById("beta")
     const gamma = document.getElementById("gamma")
 
-    body.addEventListener("click", DeviceOrientationEvent.requestPermission())
+    document.getElementById('ioscheck').addEventListener("click", DeviceOrientationEvent.requestPermission())
 
     window.addEventListener("deviceorientation", orientation)
 
