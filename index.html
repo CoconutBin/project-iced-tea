@@ -17,6 +17,27 @@
     <a href="debug.html"><button>Debug</button></a>
     <button id="settings">Settings</button>
     <div id="gamePackList"></div>
+    <dialog id="settingsContainer" class="settingsDisplay">
+        <fieldset style="margin: 8px">
+            <legend>
+                Control Scheme:
+            </legend>
+            <label>
+                Motion
+                <input type="radio" name="controlScheme" value="motion" id="motionControlScheme" checked>
+            </label>
+            <label>
+                Touch
+                <input type="radio" name="controlScheme" value="touch" id="touchControlScheme">
+            </label>
+        </fieldset>
+
+        <label>
+            Timer (seconds)
+            <input type="number" name="timerSeconds" id="timerSeconds" min="1" step="1">
+        </label>
+        <button id="settingsCloseButton">Close</button>
+    </dialog>
 </body>
 <script src="./src/js/classes.js"></script>
 <script src="./src/js/gamepacks.js"></script>

@@ -142,3 +142,15 @@ button {
 button:hover {
     background: var(--secondary)
 }
+
+.settingsDisplay{
+    background: var(--primary);
+    border-radius: calc((2vh + 2vw)/2);
+    padding: 0 10px;
+    overflow: auto;
+    padding: 20px 20px;
+    width: max(30vw,350px);
+    max-height: 80vh;
+    align-content: center;
+    border: 8px;
+}

@@ -192,7 +192,7 @@ class Game {
         Game.gamePackItems = gamePackItemsShuffled;
         Game.start();
     }
-    static init(gameTextElement, gameTimerElement) {
+    static init(gameTextElement, gameTimerElement, gameTimerSeconds) {
         if (Game.initialized)
             throw new Error("Attempted to initialize while already initialized");
         Game.gameTimerElement = gameTimerElement;
@@ -207,13 +207,19 @@ class Settings {
             Settings.options = JSON.parse(localStorageSettings);
         }
         else {
-            // To do: add default options
+            Settings.options = {
+                controlScheme: 'motion',
+                timerSeconds: 60
+            };
         }
     }
-    static modify(setting) {
-        Settings.options[setting.key] = setting.value;
+    static modify(setting, value) {
+        Settings.options[setting] = value;
         localStorage.setItem("settings", JSON.stringify(Settings.options));
         console.log("Settings modified", Settings.options);
     }
-    static options = {};
+    static options = {
+        controlScheme: undefined,
+        timerSeconds: undefined
+    };
 }

@@ -201,7 +201,7 @@ class Game {
         Game.start()
     }
 
-    static init(gameTextElement: HTMLElement, gameTimerElement: HTMLElement) {
+    static init(gameTextElement: HTMLElement, gameTimerElement: HTMLElement, gameTimerSeconds: number) {
         if (Game.initialized) throw new Error("Attempted to initialize while already initialized")
 
         Game.gameTimerElement = gameTimerElement
@@ -217,17 +217,24 @@ class Settings {
         if (localStorageSettings != null) {
             Settings.options = JSON.parse(localStorageSettings)
         } else {
-            // To do: add default options
+            Settings.options = {
+                controlScheme: 'motion',
+                timerSeconds: 60
+            }
         }
     }
 
-    static modify(setting){
-        Settings.options[setting.key] = setting.value
+    static modify(setting, value){
+        Settings.options[setting] = value
         localStorage.setItem("settings", JSON.stringify(Settings.options))
         console.log("Settings modified", Settings.options)
     }
 
-    static options = {
-
+    static options: {
+        controlScheme: 'motion' | 'touch',
+        timerSeconds: number
+    } = {
+        controlScheme: undefined,
+        timerSeconds: undefined
     }
 }
