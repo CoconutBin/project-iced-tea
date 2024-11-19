@@ -29,7 +29,7 @@ class Game {
                     .then(response => {
                     // (optional) Do something after API prompt dismissed.
                     if (response == "granted") {
-                        Game.gameTextElement.parentElement.addEventListener('click', calibration);
+                        calibration();
                     }
                 })
                     .catch(error => document.getElementById("errors").innerText = error);
@@ -49,34 +49,33 @@ class Game {
                 Game.deviceOrientation = Game.findRotation(e.gamma, e.beta);
                 console.log(e.gamma, e.beta);
                 window.removeEventListener("deviceorientation", setOrientation);
+                if (Game.deviceOrientation == undefined) {
+                    window.addEventListener("deviceorientation", setOrientation);
+                    clearInterval(intervalId);
+                }
             }
-            if (Game.deviceOrientation == undefined) {
-                window.addEventListener("deviceorientation", setOrientation);
-            }
-            else {
-                let seconds = 3;
-                const intervalId = setInterval(() => {
-                    Game.gameTextElement.innerText = seconds.toString();
-                    seconds--;
-                    if (seconds < 0) {
-                        Game.gameTextElement.parentElement.classList.remove("correct");
-                        clearInterval(intervalId);
-                        Game.nextWord();
-                        window.addEventListener("deviceorientation", Game.manageTilt);
-                        let gameTimerSecondsLocal = Game.gameTimerSeconds;
-                        const gameTimer = setInterval(() => {
-                            if (gameTimerSecondsLocal < 1) {
-                                Game.end();
-                                window.removeEventListener("deviceorientation", Game.manageTilt);
-                                clearInterval(gameTimer);
-                            }
-                            Game.gameTimerElement.innerText = gameTimerSecondsLocal.toString();
-                            gameTimerSecondsLocal--;
-                        }, 1000);
-                    }
-                }, 1000);
-                Game.gameTextElement.parentElement.removeEventListener('click', calibration);
-            }
+            let seconds = 3;
+            const intervalId = setInterval(() => {
+                Game.gameTextElement.innerText = seconds.toString();
+                seconds--;
+                if (seconds < 0) {
+                    Game.gameTextElement.parentElement.classList.remove("correct");
+                    clearInterval(intervalId);
+                    Game.nextWord();
+                    window.addEventListener("deviceorientation", Game.manageTilt);
+                    let gameTimerSecondsLocal = Game.gameTimerSeconds;
+                    const gameTimer = setInterval(() => {
+                        if (gameTimerSecondsLocal < 1) {
+                            Game.end();
+                            window.removeEventListener("deviceorientation", Game.manageTilt);
+                            clearInterval(gameTimer);
+                        }
+                        Game.gameTimerElement.innerText = gameTimerSecondsLocal.toString();
+                        gameTimerSecondsLocal--;
+                    }, 1000);
+                }
+            }, 1000);
+            Game.gameTextElement.parentElement.removeEventListener('click', calibration);
         }
     }
     static end() {
@@ -85,7 +84,7 @@ class Game {
         Game.gameEndModal.showModal();
     }
     static nextWord() {
-        if (Game.gamePackItems.length < 1) {
+        if (Game.gamePackItems.length <= 1) {
             Game.end();
             return;
         }
@@ -175,7 +174,7 @@ class Game {
                 skip();
                 Game.nextWord();
             }
-            else if (!Game.isChecking) {
+            else if (!Game.isChecking && e.beta < Game.tiltAngles.portraitTurnDownBeta && e.beta > Game.tiltAngles.portraitTurnUpBeta) {
                 Game.isChecking = true;
                 console.log("center");
             }
@@ -208,7 +207,13 @@ class Settings {
             Settings.options = JSON.parse(localStorageSettings);
         }
         else {
+            // To do: add default options
         }
+    }
+    static modify(setting) {
+        Settings.options[setting.key] = setting.value;
+        localStorage.setItem("settings", JSON.stringify(Settings.options));
+        console.log("Settings modified", Settings.options);
     }
     static options = {};
 }

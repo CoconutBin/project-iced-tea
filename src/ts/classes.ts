@@ -26,43 +26,44 @@ class Game {
     static start() {
 
         Game.gameTextElement.parentElement.addEventListener('click', calibration)
-          
 
-        function permission () {
-            if ( typeof( DeviceMotionEvent ) !== "undefined" && typeof( (DeviceMotionEvent as any).requestPermission ) === "function" ) {
+
+        function permission() {
+            if (typeof (DeviceMotionEvent) !== "undefined" && typeof ((DeviceMotionEvent as any).requestPermission) === "function") {
                 // (optional) Do something before API request prompt.
                 (DeviceMotionEvent as any).requestPermission()
-                    .then( response => {
-                    // (optional) Do something after API prompt dismissed.
-                    if ( response == "granted" ) {
-                        Game.gameTextElement.parentElement.addEventListener('click', calibration)
-                    }
-                })
-                    .catch( error => document.getElementById("errors").innerText = error)
+                    .then(response => {
+                        // (optional) Do something after API prompt dismissed.
+                        if (response == "granted") {
+                            calibration()
+                        }
+                    })
+                    .catch(error => document.getElementById("errors").innerText = error)
             } else {
-                alert( "DeviceMotionEvent is not defined" );
+                alert("DeviceMotionEvent is not defined");
             }
         }
 
-        if(typeof (DeviceMotionEvent as any).requestPermission === 'function'){
+        if (typeof (DeviceMotionEvent as any).requestPermission === 'function') {
             Game.gameTextElement.parentElement.removeEventListener('click', calibration)
-            Game.gameTextElement.parentElement.addEventListener( "click", permission );
+            Game.gameTextElement.parentElement.addEventListener("click", permission);
         }
 
-        function calibration(){
+        function calibration() {
             Game.gameTextElement.parentElement.classList.add("correct")
             window.addEventListener("deviceorientation", setOrientation)
 
-            function setOrientation(e: DeviceOrientationEvent){
+            function setOrientation(e: DeviceOrientationEvent) {
                 Game.deviceOrientation = Game.findRotation(e.gamma, e.beta)
                 console.log(e.gamma, e.beta)
                 window.removeEventListener("deviceorientation", setOrientation)
+                if (Game.deviceOrientation == undefined) {
+                    window.addEventListener("deviceorientation", setOrientation)
+                    clearInterval(intervalId)
+                }
             }
 
-            if(Game.deviceOrientation == undefined){
-                window.addEventListener("deviceorientation", setOrientation)
-            } else {
-                let seconds = 3;
+            let seconds = 3;
 
             const intervalId = setInterval(() => {
                 Game.gameTextElement.innerText = seconds.toString();
@@ -75,18 +76,18 @@ class Game {
                     window.addEventListener("deviceorientation", Game.manageTilt)
                     let gameTimerSecondsLocal = Game.gameTimerSeconds
                     const gameTimer = setInterval(() => {
-                        if(gameTimerSecondsLocal < 1){
+                        if (gameTimerSecondsLocal < 1) {
                             Game.end()
                             window.removeEventListener("deviceorientation", Game.manageTilt)
                             clearInterval(gameTimer)
                         }
-                            Game.gameTimerElement.innerText = gameTimerSecondsLocal.toString()
-                            gameTimerSecondsLocal--
+                        Game.gameTimerElement.innerText = gameTimerSecondsLocal.toString()
+                        gameTimerSecondsLocal--
                     }, 1000)
-                }}, 1000);
+                }
+            }, 1000);
 
             Game.gameTextElement.parentElement.removeEventListener('click', calibration)
-            }
         }
     }
 
@@ -97,15 +98,15 @@ class Game {
     }
 
     static nextWord() {
-        if (Game.gamePackItems.length < 1) {
+        if (Game.gamePackItems.length <= 1) {
             Game.end()
             return
         }
         Game.isChecking = false
         setTimeout(() => {
-        Game.gameTextElement.parentElement.classList.remove("correct")
-        Game.gameTextElement.parentElement.classList.remove("skip")
-        Game.gameTextElement.innerText = Game.gamePackItems.shift()
+            Game.gameTextElement.parentElement.classList.remove("correct")
+            Game.gameTextElement.parentElement.classList.remove("skip")
+            Game.gameTextElement.innerText = Game.gamePackItems.shift()
         }, 500)
     }
 
@@ -130,7 +131,7 @@ class Game {
             } else alert('Please center your device');
         }
     }
-    
+
     static tiltAngles = {
         landscapeMidPointGamma: 20,
         landscapeTurnPointGamma: 45,
@@ -141,13 +142,13 @@ class Game {
     static manageTilt(e: DeviceOrientationEvent) {
 
 
-        function correct(){
+        function correct() {
             Game.correctAnswers++
             Game.gameTextElement.parentElement.classList.add("correct")
             Game.gameTextElement.innerText = "Correct"
         }
 
-        function skip(){
+        function skip() {
             Game.gameTextElement.parentElement.classList.add("skip")
             Game.gameTextElement.innerText = "Skipped"
         }
@@ -156,15 +157,15 @@ class Game {
             window.removeEventListener("deviceorientation", Game.manageTilt)
             return
         }
-        if(window.innerWidth > window.innerHeight){
+        if (window.innerWidth > window.innerHeight) {
             if (e.gamma > -Game.tiltAngles.landscapeTurnPointGamma && e.gamma < Game.tiltAngles.landscapeMidPointGamma && Game.isChecking) {
-                console.log(Game.deviceOrientation == "rlandscape"? "down":"up")
-                if(Game.deviceOrientation == "rlandscape") correct()
+                console.log(Game.deviceOrientation == "rlandscape" ? "down" : "up")
+                if (Game.deviceOrientation == "rlandscape") correct()
                 else skip()
                 Game.nextWord()
             } else if (e.gamma > Game.tiltAngles.landscapeMidPointGamma && e.gamma < Game.tiltAngles.landscapeTurnPointGamma && Game.isChecking) {
-                console.log(Game.deviceOrientation == "landscape"? "down":"up")
-                if(Game.deviceOrientation == "landscape") correct() 
+                console.log(Game.deviceOrientation == "landscape" ? "down" : "up")
+                if (Game.deviceOrientation == "landscape") correct()
                 else skip()
                 Game.nextWord()
             } else if (!Game.isChecking && Math.abs(e.gamma) > 60) {
@@ -173,15 +174,15 @@ class Game {
             }
         }
         else {
-            if(Math.abs(e.beta) > Game.tiltAngles.portraitTurnDownBeta && Game.isChecking){
+            if (Math.abs(e.beta) > Game.tiltAngles.portraitTurnDownBeta && Game.isChecking) {
                 console.log("down")
                 correct()
                 Game.nextWord()
-            } else if(Math.abs(e.beta) < Game.tiltAngles.portraitTurnUpBeta && Game.isChecking){
+            } else if (Math.abs(e.beta) < Game.tiltAngles.portraitTurnUpBeta && Game.isChecking) {
                 console.log("up")
                 skip()
                 Game.nextWord()
-            } else if(!Game.isChecking){
+            } else if (!Game.isChecking && e.beta < Game.tiltAngles.portraitTurnDownBeta && e.beta > Game.tiltAngles.portraitTurnUpBeta) {
                 Game.isChecking = true
                 console.log("center")
             }
@@ -189,7 +190,7 @@ class Game {
     }
 
     static loadGamePack(gamePack: GamePack) {
-        if(gamePack.words.length < 1) return
+        if (gamePack.words.length < 1) return
         const gamePackItems = [...gamePack.words]
         const gamePackItemsShuffled: string[] = []
         while (gamePackItems.length > 0) {
@@ -209,15 +210,21 @@ class Game {
     }
 }
 
-class Settings{
-    static init(){
+class Settings {
+    static init() {
         const localStorageSettings = localStorage.getItem("settings")
 
-        if(localStorageSettings != null){
+        if (localStorageSettings != null) {
             Settings.options = JSON.parse(localStorageSettings)
-        } else{
-            
+        } else {
+            // To do: add default options
         }
+    }
+
+    static modify(setting){
+        Settings.options[setting.key] = setting.value
+        localStorage.setItem("settings", JSON.stringify(Settings.options))
+        console.log("Settings modified", Settings.options)
     }
 
     static options = {
