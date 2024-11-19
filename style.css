@@ -143,7 +143,8 @@ button:hover {
     background: var(--secondary)
 }
 
-.settingsDisplay{
+.settingsDisplay,
+.detailsDisplay{
     background: var(--primary);
     border-radius: calc((2vh + 2vw)/2);
     padding: 0 10px;
@@ -153,4 +154,51 @@ button:hover {
     max-height: 80vh;
     align-content: center;
     border: 8px;
+}
+
+/*   IS-OPEN STATE   */
+dialog[open] {
+    transition-property: all;
+    transition-duration: 200ms;
+    transition-behavior: allow-discrete;
+    transition-timing-function: ease-out;
+    transform: scale(1);
+    opacity: 1;
+}
+
+dialog[open]::backdrop{
+    transition-property: all;
+    transition-duration: 200ms;
+    transition-behavior: allow-discrete;
+    transition-timing-function: ease-out;
+    background: rgba(0, 0, 0, 0.5);
+}
+
+/*   EXIT STATE   */
+dialog{
+    transition-property: all;
+    transition-duration: 150ms;
+    transition-behavior: allow-discrete;
+    transition-timing-function: ease-out;
+    transform: scale(0.7);
+    opacity: 0;
+}
+
+dialog::backdrop{
+    transition-property: all;
+    transition-duration: 150ms;
+    transition-behavior: allow-discrete;
+    transition-timing-function: ease-out;
+    background: rgba(0, 0, 0, 0);
+}
+
+/* 0. BEFORE-OPEN STATE   */
+@starting-style {
+    dialog[open] {
+        transform: scale(0.5);
+    }
+
+    dialog::backdrop {
+        background: rgba(0, 0, 0, 0);
+    }
 }

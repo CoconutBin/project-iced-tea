@@ -7,6 +7,10 @@ settingsButton.addEventListener("click", () => {
 settingsCloseButton.addEventListener("click", () => {
     settingsContainer.close();
 });
+settingsContainer.addEventListener("click", (e) => {
+    if (e.target == settingsContainer)
+        settingsContainer.close();
+});
 const touchControlScheme = document.getElementById("touchControlScheme");
 const motionControlScheme = document.getElementById("motionControlScheme");
 touchControlScheme.addEventListener("change", () => {

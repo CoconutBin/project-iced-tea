@@ -10,6 +10,11 @@ settingsCloseButton.addEventListener("click", () => {
     settingsContainer.close();
 })
 
+settingsContainer.addEventListener("click", (e) => {
+    if(e.target == settingsContainer)
+    settingsContainer.close();
+})
+
 const touchControlScheme = document.getElementById("touchControlScheme") as HTMLInputElement
 const motionControlScheme = document.getElementById("motionControlScheme") as HTMLInputElement
 
