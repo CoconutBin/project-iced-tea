@@ -1,4 +1,3 @@
-Settings.init();
 const settingsButton = document.getElementById("settings");
 const settingsContainer = document.getElementById("settingsContainer");
 const settingsCloseButton = document.getElementById("settingsCloseButton");

@@ -23,8 +23,40 @@ class Game {
     static initialized: boolean = false
     static deviceOrientation: 'portrait' | 'landscape' | 'rportrait' | 'rlandscape' | null
 
-    static start() {
+    static async start() {
+        console.log(Settings.options.controlScheme)
+        if (Settings.options.controlScheme === 'motion') {
+            Game.setCalibration();
+        } else Game.countdown()
+    }
 
+    static countdown() {
+        let seconds = 3;
+
+        const intervalId = setInterval(() => {
+            Game.gameTextElement.innerText = seconds.toString();
+            seconds--;
+
+            if (seconds < 0) {
+                Game.gameTextElement.parentElement.classList.remove("correct")
+                clearInterval(intervalId);
+                Game.nextWord();
+                if (Settings.options.controlScheme === 'motion') window.addEventListener("deviceorientation", Game.manageTilt)
+                let gameTimerSecondsLocal = Game.gameTimerSeconds
+                const gameTimer = setInterval(() => {
+                    if (gameTimerSecondsLocal < 1) {
+                        Game.end()
+                        if (Settings.options.controlScheme === 'motion') window.removeEventListener("deviceorientation", Game.manageTilt)
+                        clearInterval(gameTimer)
+                    }
+                    Game.gameTimerElement.innerText = gameTimerSecondsLocal.toString()
+                    gameTimerSecondsLocal--
+                }, 1000)
+            }
+        }, 1000);
+    }
+
+    static setCalibration() {
         Game.gameTextElement.parentElement.addEventListener('click', calibration)
 
 
@@ -49,7 +81,7 @@ class Game {
             Game.gameTextElement.parentElement.addEventListener("click", permission);
         }
 
-        function calibration() {
+        async function calibration() {
             Game.gameTextElement.parentElement.classList.add("correct")
             window.addEventListener("deviceorientation", setOrientation)
 
@@ -58,36 +90,12 @@ class Game {
                 console.log(e.gamma, e.beta)
                 window.removeEventListener("deviceorientation", setOrientation)
                 if (Game.deviceOrientation == undefined) {
-                    window.addEventListener("deviceorientation", setOrientation)
-                    clearInterval(intervalId)
+                    // To do: run game without orientation
                 }
             }
 
-            let seconds = 3;
-
-            const intervalId = setInterval(() => {
-                Game.gameTextElement.innerText = seconds.toString();
-                seconds--;
-
-                if (seconds < 0) {
-                    Game.gameTextElement.parentElement.classList.remove("correct")
-                    clearInterval(intervalId);
-                    Game.nextWord();
-                    window.addEventListener("deviceorientation", Game.manageTilt)
-                    let gameTimerSecondsLocal = Game.gameTimerSeconds
-                    const gameTimer = setInterval(() => {
-                        if (gameTimerSecondsLocal < 1) {
-                            Game.end()
-                            window.removeEventListener("deviceorientation", Game.manageTilt)
-                            clearInterval(gameTimer)
-                        }
-                        Game.gameTimerElement.innerText = gameTimerSecondsLocal.toString()
-                        gameTimerSecondsLocal--
-                    }, 1000)
-                }
-            }, 1000);
-
             Game.gameTextElement.parentElement.removeEventListener('click', calibration)
+            Game.countdown()
         }
     }
 
@@ -204,6 +212,7 @@ class Game {
     static init(gameTextElement: HTMLElement, gameTimerElement: HTMLElement, gameTimerSeconds: number) {
         if (Game.initialized) throw new Error("Attempted to initialize while already initialized")
 
+        Game.gameTimerSeconds = gameTimerSeconds
         Game.gameTimerElement = gameTimerElement
         Game.gameTextElement = gameTextElement
         Game.initialized = true
@@ -224,7 +233,7 @@ class Settings {
         }
     }
 
-    static modify(setting, value){
+    static modify(setting, value) {
         Settings.options[setting] = value
         localStorage.setItem("settings", JSON.stringify(Settings.options))
         console.log("Settings modified", Settings.options)
@@ -234,7 +243,9 @@ class Settings {
         controlScheme: 'motion' | 'touch',
         timerSeconds: number
     } = {
-        controlScheme: undefined,
-        timerSeconds: undefined
-    }
+            controlScheme: undefined,
+            timerSeconds: undefined
+        }
 }
+
+Settings.init()

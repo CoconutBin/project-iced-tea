@@ -1,5 +1,3 @@
-Settings.init()
-
 const settingsButton = document.getElementById("settings")
 const settingsContainer = document.getElementById("settingsContainer") as HTMLDialogElement
 const settingsCloseButton = document.getElementById("settingsCloseButton")
