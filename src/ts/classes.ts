@@ -90,7 +90,9 @@ class Game {
                 console.log(e.gamma, e.beta)
                 window.removeEventListener("deviceorientation", setOrientation)
                 if (Game.deviceOrientation == undefined) {
-                    // To do: run game without orientation
+                    Settings.modify("controlScheme", "touch")
+                    Game.gameTextElement.parentElement.removeEventListener('click', calibration)
+                    Game.start()
                 }
             }
 
