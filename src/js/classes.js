@@ -80,18 +80,19 @@ class Game {
             Game.gameTextElement.parentElement.removeEventListener('click', calibration);
             Game.gameTextElement.parentElement.addEventListener("click", permission);
         }
-        async function calibration() {
+        function calibration() {
             Game.gameTextElement.parentElement.classList.add("correct");
             window.addEventListener("deviceorientation", setOrientation);
             function setOrientation(e) {
-                Game.deviceOrientation = Game.findRotation(e.gamma, e.beta);
-                console.log(e.gamma, e.beta);
-                window.removeEventListener("deviceorientation", setOrientation);
                 if (Game.deviceOrientation == undefined) {
                     Settings.modify("controlScheme", "touch");
                     Game.gameTextElement.parentElement.removeEventListener('click', calibration);
-                    Game.start();
+                    Game.countdown();
+                    return;
                 }
+                Game.deviceOrientation = Game.findRotation(e.gamma, e.beta);
+                console.log(e.gamma, e.beta);
+                window.removeEventListener("deviceorientation", setOrientation);
             }
             Game.gameTextElement.parentElement.removeEventListener('click', calibration);
             Game.countdown();
@@ -121,10 +122,10 @@ class Game {
                 alert('Please center your device');
                 return;
             }
-            if (centerGamma < 0 || (centerGamma > 0 && centerBeta && centerBeta < 0)) {
+            if (centerGamma < 0 || (centerGamma > 0 && centerBeta && (centerBeta < 0 || centerBeta > 170))) {
                 return 'landscape';
             }
-            else if (centerGamma > 0 || (centerGamma < 0 && centerBeta && centerBeta > 0)) {
+            else if (centerGamma > 0 || (centerGamma < 0 && centerBeta && (centerBeta > 0 || centerBeta < -170))) {
                 return 'rlandscape';
             }
             else {
@@ -142,7 +143,7 @@ class Game {
     }
     static tiltAngles = {
         landscapeMidPointGamma: 20,
-        landscapeTurnPointGamma: 45,
+        landscapeTurnPointGamma: 30,
         portraitTurnUpBeta: 50,
         portraitTurnDownBeta: 110
     };
@@ -180,8 +181,8 @@ class Game {
                 Game.nextWord();
             }
             else if (!Game.isChecking && Math.abs(e.gamma) > 60) {
-                Game.isChecking = true;
                 console.log("center");
+                Game.isChecking = true;
             }
         }
         else {

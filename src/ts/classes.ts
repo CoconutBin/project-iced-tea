@@ -45,16 +45,22 @@ class Game {
                 Game.nextWord();
                 if (Settings.options.controlScheme === 'motion') window.addEventListener("deviceorientation", Game.manageTilt)
                 else window.addEventListener('click', Game.manageTouch)
+
                 let gameTimerSecondsLocal = Game.gameTimerSeconds
                 const gameTimer = setInterval(() => {
                     if (gameTimerSecondsLocal < 1) {
+
                         Game.end()
+
                         if (Settings.options.controlScheme === 'motion') window.removeEventListener("deviceorientation", Game.manageTilt)
                         else window.removeEventListener('click', Game.manageTouch)
+
                         clearInterval(gameTimer)
                     }
+
                     Game.gameTimerElement.innerText = gameTimerSecondsLocal.toString()
                     gameTimerSecondsLocal--
+
                 }, 1000)
             }
         }, 1000);
@@ -85,19 +91,20 @@ class Game {
             Game.gameTextElement.parentElement.addEventListener("click", permission);
         }
 
-        async function calibration() {
+        function calibration() {
             Game.gameTextElement.parentElement.classList.add("correct")
             window.addEventListener("deviceorientation", setOrientation)
 
             function setOrientation(e: DeviceOrientationEvent) {
-                Game.deviceOrientation = Game.findRotation(e.gamma, e.beta)
-                console.log(e.gamma, e.beta)
-                window.removeEventListener("deviceorientation", setOrientation)
                 if (Game.deviceOrientation == undefined) {
                     Settings.modify("controlScheme", "touch")
                     Game.gameTextElement.parentElement.removeEventListener('click', calibration)
-                    Game.start()
+                    Game.countdown()
+                    return
                 }
+                Game.deviceOrientation = Game.findRotation(e.gamma, e.beta)
+                console.log(e.gamma, e.beta)
+                window.removeEventListener("deviceorientation", setOrientation)
             }
 
             Game.gameTextElement.parentElement.removeEventListener('click', calibration)
@@ -131,9 +138,9 @@ class Game {
                 alert('Please center your device');
                 return;
             }
-            if (centerGamma < 0 || (centerGamma > 0 && centerBeta && centerBeta < 0)) {
+            if (centerGamma < 0 || (centerGamma > 0 && centerBeta && (centerBeta < 0 || centerBeta > 170))) {
                 return 'landscape';
-            } else if (centerGamma > 0 || (centerGamma < 0 && centerBeta && centerBeta > 0)) {
+            } else if (centerGamma > 0 || (centerGamma < 0 && centerBeta && (centerBeta > 0 || centerBeta < -170))) {
                 return 'rlandscape';
             } else {
                 console.error("Unexpected landscape gamma or beta");
@@ -148,7 +155,7 @@ class Game {
 
     static tiltAngles = {
         landscapeMidPointGamma: 20,
-        landscapeTurnPointGamma: 45,
+        landscapeTurnPointGamma: 30,
         portraitTurnUpBeta: 50,
         portraitTurnDownBeta: 110
     }
@@ -176,17 +183,22 @@ class Game {
         if (window.innerWidth > window.innerHeight) {
             if (e.gamma > -Game.tiltAngles.landscapeTurnPointGamma && e.gamma < Game.tiltAngles.landscapeMidPointGamma && Game.isChecking) {
                 console.log(Game.deviceOrientation == "rlandscape" ? "down" : "up")
+
                 if (Game.deviceOrientation == "rlandscape") Game.gameActions.correct()
                 else Game.gameActions.skip()
+
                 Game.nextWord()
             } else if (e.gamma > Game.tiltAngles.landscapeMidPointGamma && e.gamma < Game.tiltAngles.landscapeTurnPointGamma && Game.isChecking) {
                 console.log(Game.deviceOrientation == "landscape" ? "down" : "up")
+
                 if (Game.deviceOrientation == "landscape") Game.gameActions.correct()
                 else Game.gameActions.skip()
+
                 Game.nextWord()
             } else if (!Game.isChecking && Math.abs(e.gamma) > 60) {
-                Game.isChecking = true
                 console.log("center")
+
+                Game.isChecking = true
             }
         }
         else {
