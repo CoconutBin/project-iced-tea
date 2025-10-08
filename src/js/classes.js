@@ -84,15 +84,15 @@ class Game {
             Game.gameTextElement.parentElement.classList.add("correct");
             window.addEventListener("deviceorientation", setOrientation);
             function setOrientation(e) {
+                Game.deviceOrientation = Game.findRotation(e.gamma, e.beta);
+                console.log(e.gamma, e.beta);
+                window.removeEventListener("deviceorientation", setOrientation);
                 if (Game.deviceOrientation == undefined) {
                     Settings.modify("controlScheme", "touch");
                     Game.gameTextElement.parentElement.removeEventListener('click', calibration);
                     Game.countdown();
                     return;
                 }
-                Game.deviceOrientation = Game.findRotation(e.gamma, e.beta);
-                console.log(e.gamma, e.beta);
-                window.removeEventListener("deviceorientation", setOrientation);
             }
             Game.gameTextElement.parentElement.removeEventListener('click', calibration);
             Game.countdown();

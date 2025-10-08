@@ -96,15 +96,16 @@ class Game {
             window.addEventListener("deviceorientation", setOrientation)
 
             function setOrientation(e: DeviceOrientationEvent) {
+                Game.deviceOrientation = Game.findRotation(e.gamma, e.beta)
+                console.log(e.gamma, e.beta)
+                window.removeEventListener("deviceorientation", setOrientation)
+
                 if (Game.deviceOrientation == undefined) {
                     Settings.modify("controlScheme", "touch")
                     Game.gameTextElement.parentElement.removeEventListener('click', calibration)
                     Game.countdown()
                     return
                 }
-                Game.deviceOrientation = Game.findRotation(e.gamma, e.beta)
-                console.log(e.gamma, e.beta)
-                window.removeEventListener("deviceorientation", setOrientation)
             }
 
             Game.gameTextElement.parentElement.removeEventListener('click', calibration)
