@@ -101,12 +101,14 @@ body {
     background: var(--primary);
     margin: 4px;
     max-width: 200px;
-    color: var(--text-light)
+    color: var(--text-light);
+    opacity: 0.75;
 }
 
 .gamePack:hover{
     transform: scale(1.025);
         cursor: pointer;
+        opacity: 1;
         transition: all .1s ease-in-out;
 }
 
